@@ -1,0 +1,346 @@
+/* ==================== رسپانسیو ==================== */
+
+/* بهبود برای تبلت */
+@media (min-width: 768px) {
+    .mobile-menu-overlay {
+        width: 300px;
+    }
+    
+    .rewards-grid-mobile {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .mining-controls-mobile {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* اسکرول‌بار سفارشی */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: var(--radius-full);
+}
+
+/* لودر */
+.loader-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xl);
+}
+
+.loader-mobile::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary);
+    border-radius: var(--radius-full);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* حالت افقی */
+@media (orientation: landscape) and (max-height: 600px) {
+    .mobile-header {
+        padding: var(--space-sm) var(--space-md);
+    }
+    
+    .mobile-content {
+        padding: var(--space-sm);
+    }
+    
+    .mobile-card {
+        padding: var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+    
+    .miner-3d-mobile {
+        width: 150px;
+        height: 150px;
+        margin: var(--space-sm) auto;
+    }
+}
+
+/* ==================== اصلاحات چیدمان ==================== */
+/* اصلاح کیف پول چند ارزی - دکمه‌ها در یک خط */
+.wallet-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.wallet-action-row-btn {
+    flex: 1;
+    min-width: 110px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* اصلاح بخش اشتراک‌گذاری در دعوت دوستان */
+.share-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.share-button {
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.share-button:active {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.share-button i {
+    font-size: 20px;
+}
+
+/* ==================== رسپانسیو فرم‌های احراز هویت ==================== */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 12px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+    
+    .auth-card {
+        max-width: 100%;
+        padding: 20px 16px;
+        margin: 0;
+        border-radius: 20px;
+        width: calc(100% - 20px);
+    }
+    
+    .auth-title {
+        font-size: 20px;
+    }
+    
+    .auth-subtitle {
+        font-size: 13px;
+    }
+    
+    .auth-logo-title {
+        font-size: 18px;
+    }
+    
+    .auth-logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .form-input {
+        padding: 14px;
+        font-size: 16px !important;
+    }
+    
+    .auth-btn {
+        padding: 14px;
+        font-size: 14px;
+    }
+    
+    .password-toggle {
+        top: 38px;
+        left: 14px;
+    }
+    
+    .auth-terms {
+        font-size: 10px;
+        line-height: 1.6;
+    }
+    
+    /* جلوگیری از زوم در iOS هنگام فوکوس */
+    input[type="tel"],
+    input[type="password"],
+    input[type="text"] {
+        font-size: 16px !important;
+    }
+    
+    .form-input:focus {
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .auth-card {
+        padding: 18px 14px;
+    }
+    
+    .auth-title {
+        font-size: 18px;
+    }
+    
+    .auth-logo {
+        margin-bottom: 16px;
+    }
+    
+    .auth-logo-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .auth-logo-title {
+        font-size: 16px;
+    }
+    
+    .auth-logo-subtitle {
+        font-size: 11px;
+    }
+    
+    .form-input {
+        padding: 12px;
+        font-size: 15px !important;
+    }
+    
+    .auth-btn {
+        padding: 12px;
+        font-size: 13px;
+    }
+    
+    .auth-switch {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+    
+    .auth-terms {
+        font-size: 9px;
+        line-height: 1.5;
+    }
+}
+
+/* برای حالت landscape در موبایل */
+@media (orientation: landscape) and (max-height: 600px) {
+    .auth-container {
+        padding: 8px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+    
+    .auth-card {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    
+    .auth-header {
+        margin-bottom: 16px;
+    }
+    
+    .auth-form {
+        gap: 12px;
+    }
+    
+    .auth-logo {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-height: 500px) {
+    .auth-card {
+        max-height: 80vh;
+    }
+}
+
+/* بهبود responsive کلی */
+@media (max-width: 380px) {
+    .wallet-action-row-btn {
+        min-width: 90px;
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .share-buttons-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .share-button {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .auth-container {
+        padding: 10px;
+    }
+    
+    .auth-card {
+        padding: 16px 12px;
+    }
+}
+
+/* بخش‌های محتوا */
+.content-section-mobile {
+    display: none;
+    animation: fadeInMobile 0.3s ease-out;
+}
+
+.content-section-mobile.active {
+    display: block;
+}
+
+@keyframes fadeInMobile {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* بهبود برای تبلت */
+@media (min-width: 768px) {
+    .mobile-menu-overlay {
+        width: 300px;
+    }
+    
+    .rewards-grid-mobile {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .mining-controls-mobile {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
