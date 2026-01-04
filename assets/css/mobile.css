@@ -273,4 +273,35 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-sm);
-    margin-top
+    margin-top: auto;
+    padding-top: var(--space-xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.menu-stat {
+    text-align: center;
+    padding: var(--space-sm);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+}
+
+.stat-value-menu {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label-menu {
+    font-size: 9px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* محتوای اصلی */
+.mobile-content {
+    padding: var(--space-md);
+    padding-top: 0;
+}
