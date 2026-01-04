@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>پنل کاربری SODmAX CityVerse - نسخه کامل (تست شده)</title>
+    
+    <!-- فونت‌ها و آیکون‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- فایل‌های CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+    <!-- پس‌زمینه -->
+    <div class="mobile-background"></div>
+    
+    <!-- ==================== بخش احراز هویت ==================== -->
+    <div class="auth-container" id="authContainer">
+        <!-- فرم ثبت‌نام -->
+        <div class="auth-card" id="registerForm">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">⚡</div>
+                    <div class="auth-logo-text">
+                        <div class="auth-logo-title">SODmAX</div>
+                        <div class="auth-logo-subtitle">CityVerse Pro</div>
+                    </div>
+                </div>
+                <h2 class="auth-title">ثبت‌نام در SODmAX</h2>
+                <p class="auth-subtitle">حساب کاربری جدید ایجاد کنید</p>
+            </div>
+            
+            <form class="auth-form" id="registerFormElement">
+                <div class="form-group">
+                    <label class="form-label" for="registerName">نام و نام خانوادگی</label>
+                    <input type="text" id="registerName" class="form-input" placeholder="مثلاً: علی محمدی" required>
+                    <div class="form-error" id="nameError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>نام و نام خانوادگی الزامی است</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="registerPhone">شماره موبایل</label>
+                    <input type="tel" id="registerPhone" class="form-input" placeholder="مثلاً: 09123456789" required>
+                    <div class="form-error" id="phoneError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>شماره موبایل معتبر وارد کنید</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="registerPassword">رمز عبور</label>
+                    <input type="password" id="registerPassword" class="form-input" placeholder="حداقل ۶ کاراکتر" required>
+                    <button type="button" class="password-toggle" id="toggleRegisterPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <div class="form-error" id="passwordError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>رمز عبور باید حداقل ۶ کاراکتر باشد</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="registerConfirmPassword">تکرار رمز عبور</label>
+                    <input type="password" id="registerConfirmPassword" class="form-input" placeholder="رمز عبور را مجدداً وارد کنید" required>
+                    <button type="button" class="password-toggle" id="toggleRegisterConfirmPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <div class="form-error" id="confirmPasswordError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>رمز عبور با تکرار آن مطابقت ندارد</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="registerReferralCode">کد دعوت (اختیاری)</label>
+                    <input type="text" id="registerReferralCode" class="form-input" placeholder="کد دعوت معرف خود را وارد کنید">
+                    <div class="form-error" id="referralCodeError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>کد دعوت معتبر نیست</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn" id="registerBtn">
+                    <i class="fas fa-user-plus"></i>
+                    ایجاد حساب کاربری
+                </button>
+            </form>
+            
+            <div class="auth-switch">
+                <span class="auth-switch-text">قبلاً ثبت‌نام کرده‌اید؟</span>
+                <button class="auth-switch-btn" id="showLoginBtn">ورود به حساب</button>
+            </div>
+            
+            <div class="auth-terms">
+                با ثبت‌نام، <a href="#">قوانین و مقررات</a> و <a href="#">حریم خصوصی</a> SODmAX CityVerse را می‌پذیرید.
+            </div>
+        </div>
+        
+        <!-- فرم ورود -->
+        <div class="auth-card hidden" id="loginForm">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <div class="auth-logo-icon">⚡</div>
+                    <div class="auth-logo-text">
+                        <div class="auth-logo-title">SODmAX</div>
+                        <div class="auth-logo-subtitle">CityVerse Pro</div>
+                    </div>
+                </div>
+                <h2 class="auth-title">ورود به SODmAX</h2>
+                <p class="auth-subtitle">به حساب کاربری خود وارد شوید</p>
+            </div>
+            
+            <form class="auth-form" id="loginFormElement">
+                <div class="form-group">
+                    <label class="form-label" for="loginPhone">شماره موبایل</label>
+                    <input type="tel" id="loginPhone" class="form-input" placeholder="شماره موبایل خود را وارد کنید" required>
+                    <div class="form-error" id="loginPhoneError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>شماره موبایل خود را وارد کنید</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">رمز عبور</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="رمز عبور خود را وارد کنید" required>
+                    <button type="button" class="password-toggle" id="toggleLoginPassword">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <div class="form-error" id="loginPasswordError">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>رمز عبور خود را وارد کنید</span>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="text-align: left; margin-top: -8px;">
+                    <button type="button" class="auth-switch-btn" id="forgotPasswordBtn" style="font-size: 12px;">
+                        رمز عبور را فراموش کرده‌اید؟
+                    </button>
+                </div>
+                
+                <button type="submit" class="auth-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    ورود به حساب
+                </button>
+            </form>
+            
+            <div class="auth-switch">
+                <span class="auth-switch-text">حساب کاربری ندارید؟</span>
+                <button class="auth-switch-btn" id="showRegisterBtn">ثبت‌نام کنید</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ==================== بخش اصلی اپلیکیشن ==================== -->
+    <div class="app-container" id="appContainer">
+        <!-- هدر موبایل -->
+        <header class="mobile-header">
+            <div class="logo-mobile">
+                <div class="logo-icon-mobile">⚡</div>
+                <div class="logo-text-mobile">
+                    <div class="logo-title-mobile">SODmAX</div>
+                    <div class="logo-subtitle-mobile">CityVerse Pro</div>
+                </div>
+            </div>
+            
+            <div class="header-actions-mobile">
+                <button class="header-btn" onclick="showNotificationsMobile()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <button class="header-btn" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- منوی کشویی -->
+        <div class="mobile-menu-overlay" id="mobileMenu">
+            <div class="menu-header-mobile">
+                <div class="user-avatar-mobile" id="userAvatar">ع</div>
+                <div class="user-info-mobile">
+                    <h4 id="userNameDisplay">علی محمدی</h4>
+                    <p>
+                        <span class="status-dot"></span>
+                        <span id="userLevelDisplay">آنلاین - سطح ۵</span>
+                    </p>
+                </div>
+            </div>
+            
+            <nav class="mobile-nav">
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">اصلی</div>
+                    <a href="#dashboard" class="nav-item-mobile active" onclick="showSectionMobile('dashboard')">
+                        <div class="nav-icon-mobile"><i class="fas fa-chart-pie"></i></div>
+                        <div class="nav-label-mobile">داشبورد</div>
+                    </a>
+                    <a href="#mining" class="nav-item-mobile" onclick="showSectionMobile('mining')">
+                        <div class="nav-icon-mobile"><i class="fas fa-hard-hat"></i></div>
+                        <div class="nav-label-mobile">استخراج</div>
+                        <span class="nav-badge-mobile">جدید</span>
+                    </a>
+                    <a href="#wallet" class="nav-item-mobile" onclick="showSectionMobile('wallet')">
+                        <div class="nav-icon-mobile"><i class="fas fa-wallet"></i></div>
+                        <div class="nav-label-mobile">کیف پول</div>
+                    </a>
+                    <a href="#invite" class="nav-item-mobile" onclick="showSectionMobile('invite')">
+                        <div class="nav-icon-mobile"><i class="fas fa-user-plus"></i></div>
+                        <div class="nav-label-mobile">دعوت دوستان</div>
+                        <span class="nav-badge-mobile" id="inviteBadge">24</span>
+                    </a>
+                </div>
+                
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">بازی و سرگرمی</div>
+                    <a href="#missions" class="nav-item-mobile" onclick="showSectionMobile('missions')">
+                        <div class="nav-icon-mobile"><i class="fas fa-tasks"></i></div>
+                        <div class="nav-label-mobile">مأموریت‌ها</div>
+                        <span class="nav-badge-mobile">3</span>
+                    </a>
+                    <a href="#rewards" class="nav-item-mobile" onclick="showSectionMobile('rewards')">
+                        <div class="nav-icon-mobile"><i class="fas fa-gift"></i></div>
+                        <div class="nav-label-mobile">پاداش‌ها</div>
+                    </a>
+                </div>
+                
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">سیستم</div>
+                    <a href="#support" class="nav-item-mobile" onclick="showSectionMobile('support')">
+                        <div class="nav-icon-mobile"><i class="fas fa-headset"></i></div>
+                        <div class="nav-label-mobile">پشتیبانی</div>
+                    </a>
+                    <a href="#settings" class="nav-item-mobile" onclick="showSectionMobile('settings')">
+                        <div class="nav-icon-mobile"><i class="fas fa-cog"></i></div>
+                        <div class="nav-label-mobile">تنظیمات</div>
+                    </a>
+                    <a href="#profile" class="nav-item-mobile" onclick="showSectionMobile('profile')">
+                        <div class="nav-icon-mobile"><i class="fas fa-user"></i></div>
+                        <div class="nav-label-mobile">پروفایل</div>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="menu-stats-mobile">
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuSodBalance">1.8M</div>
+                    <div class="stat-label-menu">SOD</div>
+                </div>
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuTomanBalance">28K</div>
+                    <div class="stat-label-menu">تومان</div>
+                </div>
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuTotalEarned">124K</div>
+                    <div class="stat-label-menu">درآمد کل</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- محتوای اصلی -->
+        <main class="mobile-content" id="mobileContent">
+            <!-- محتوای داینامیک توسط JavaScript بارگذاری می‌شود -->
+        </main>
+        
+        <!-- نوار پایین -->
+        <nav class="mobile-bottom-nav">
+            <a href="#dashboard" class="bottom-nav-item active" onclick="showSectionMobile('dashboard')">
+                <i class="fas fa-home bottom-nav-icon"></i>
+                <span class="bottom-nav-label">داشبورد</span>
+            </a>
+            <a href="#mining" class="bottom-nav-item" onclick="showSectionMobile('mining')">
+                <i class="fas fa-hard-hat bottom-nav-icon"></i>
+                <span class="bottom-nav-label">استخراج</span>
+            </a>
+            <a href="#wallet" class="bottom-nav-item" onclick="showSectionMobile('wallet')">
+                <i class="fas fa-wallet bottom-nav-icon"></i>
+                <span class="bottom-nav-label">کیف پول</span>
+            </a>
+            <a href="#invite" class="bottom-nav-item" onclick="showSectionMobile('invite')">
+                <i class="fas fa-user-plus bottom-nav-icon"></i>
+                <span class="bottom-nav-label">دعوت دوستان</span>
+            </a>
+            <a href="#rewards" class="bottom-nav-item" onclick="showSectionMobile('rewards')">
+                <i class="fas fa-gift bottom-nav-icon"></i>
+                <span class="bottom-nav-label">پاداش‌ها</span>
+            </a>
+        </nav>
+    </div>
+    
+    <!-- فایل‌های JavaScript -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/user-manager.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/mining.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
