@@ -310,26 +310,3 @@ function createToastContainer() {
     document.body.appendChild(container);
     return container;
 }
-
-// Export برای استفاده در سایر فایل‌ها
-export {
-    formatNumber,
-    getAvatarFromName,
-    copyToClipboard,
-    validatePhone,
-    validatePassword,
-    showError,
-    hideError,
-    vibrate,
-    generateReferralCode,
-    toPersianDate,
-    delay,
-    saveToLocalStorage,
-    readFromLocalStorage,
-    removeFromLocalStorage,
-    checkFeatures,
-    createMiningEffect,
-    createManualMiningEffect,
-    showToastMobile,
-    createToastContainer
-};
