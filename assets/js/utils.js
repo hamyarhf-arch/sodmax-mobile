@@ -2,7 +2,7 @@
 
 // فرمت اعداد
 function formatNumber(num) {
-    if (!num) return "0";
+    if (!num && num !== 0) return "0";
     if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toString();
@@ -147,6 +147,171 @@ function checkFeatures() {
     };
 }
 
+// ایجاد افکت ماینینگ
+function createMiningEffect(amount, elementSelector = '.miner-3d-mobile') {
+    const minerElement = document.querySelector(elementSelector);
+    if (!minerElement) {
+        console.error('عنصر ماینر پیدا نشد:', elementSelector);
+        return;
+    }
+    
+    const rect = minerElement.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const effect = document.createElement('div');
+    effect.className = 'mining-effect';
+    effect.innerHTML = `<span>+${amount} SOD</span>`;
+    
+    effect.style.position = 'fixed';
+    effect.style.left = `${centerX}px`;
+    effect.style.top = `${centerY}px`;
+    effect.style.zIndex = '10000';
+    effect.style.transform = 'translate(-50%, -50%)';
+    
+    document.body.appendChild(effect);
+    
+    // حذف بعد از انیمیشن
+    setTimeout(() => {
+        if (effect.parentNode) {
+            effect.parentNode.removeChild(effect);
+        }
+    }, 1100);
+}
+
+// افکت ویژه برای استخراج دستی
+function createManualMiningEffect(amount) {
+    const minerElement = document.querySelector('.miner-3d-mobile');
+    if (!minerElement) return;
+    
+    const rect = minerElement.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // افکت اصلی
+    const effect = document.createElement('div');
+    effect.className = 'mining-effect';
+    effect.innerHTML = `<span>⚡ +${amount} SOD ⚡</span>`;
+    
+    effect.style.position = 'fixed';
+    effect.style.left = `${centerX}px`;
+    effect.style.top = `${centerY}px`;
+    effect.style.zIndex = '10000';
+    effect.style.transform = 'translate(-50%, -50%)';
+    
+    // افکت اضافی (دایره‌های انرژی)
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            const energyRing = document.createElement('div');
+            energyRing.style.cssText = `
+                position: fixed;
+                left: ${centerX}px;
+                top: ${centerY}px;
+                width: 50px;
+                height: 50px;
+                border: 3px solid var(--primary);
+                border-radius: 50%;
+                z-index: 9999;
+                pointer-events: none;
+                transform: translate(-50%, -50%) scale(0);
+                animation: energyPulse 0.8s ease-out forwards;
+            `;
+            
+            document.body.appendChild(energyRing);
+            
+            setTimeout(() => {
+                if (energyRing.parentNode) {
+                    energyRing.parentNode.removeChild(energyRing);
+                }
+            }, 800);
+        }, i * 100);
+    }
+    
+    // اضافه کردن انیمیشن CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes energyPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+                border-color: var(--primary);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+                border-color: var(--primary-light);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(effect);
+    
+    // حذف افکت‌ها بعد از انیمیشن
+    setTimeout(() => {
+        if (effect.parentNode) {
+            effect.parentNode.removeChild(effect);
+        }
+        if (style.parentNode) {
+            style.parentNode.removeChild(style);
+        }
+    }, 1100);
+}
+
+// نمایش توست
+function showToastMobile(title, message, type = 'info') {
+    const container = document.getElementById('toastContainerMobile') || createToastContainer();
+    const toast = document.createElement('div');
+    toast.className = 'toast-mobile';
+    
+    let icon = 'fa-bell';
+    let borderColor = 'var(--primary)';
+    
+    switch(type) {
+        case 'success':
+            icon = 'fa-check-circle';
+            borderColor = 'var(--success)';
+            break;
+        case 'error':
+            icon = 'fa-exclamation-circle';
+            borderColor = 'var(--error)';
+            break;
+        case 'warning':
+            icon = 'fa-exclamation-triangle';
+            borderColor = 'var(--warning)';
+            break;
+    }
+    
+    toast.style.borderLeftColor = borderColor;
+    toast.innerHTML = `
+        <div class="toast-icon-mobile" style="background: ${borderColor};">
+            <i class="fas ${icon}"></i>
+        </div>
+        <div class="toast-content-mobile">
+            <div class="toast-title-mobile">${title}</div>
+            <div class="toast-message-mobile">${message}</div>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// ایجاد کانتینر توست
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.className = 'toast-container-mobile';
+    container.id = 'toastContainerMobile';
+    document.body.appendChild(container);
+    return container;
+}
+
+// Export برای استفاده در سایر فایل‌ها
 export {
     formatNumber,
     getAvatarFromName,
@@ -162,5 +327,9 @@ export {
     saveToLocalStorage,
     readFromLocalStorage,
     removeFromLocalStorage,
-    checkFeatures
+    checkFeatures,
+    createMiningEffect,
+    createManualMiningEffect,
+    showToastMobile,
+    createToastContainer
 };
