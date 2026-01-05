@@ -162,19 +162,961 @@
     
     <!-- ==================== بخش اصلی اپلیکیشن ==================== -->
     <div class="app-container hidden" id="appContainer">
-        <div style="padding: 40px 20px; text-align: center; color: white; background: linear-gradient(135deg, #0066ff, #00d4aa); border-radius: 20px; margin: 20px;">
-            <h1 style="font-size: 32px; margin-bottom: 20px;">🎉 ورود موفق!</h1>
-            <p style="font-size: 18px; margin-bottom: 10px;" id="welcomeMessage">خوش آمدید کاربر عزیز!</p>
-            <p style="font-size: 14px; opacity: 0.8; margin-bottom: 30px;">شما با موفقیت وارد پنل کاربری SODmAX شده‌اید.</p>
-            <button onclick="logoutUser()" style="padding: 12px 30px; background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid white; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer;">
-                <i class="fas fa-sign-out-alt"></i> خروج از حساب
-            </button>
+        <!-- هدر موبایل -->
+        <header class="mobile-header">
+            <div class="logo-mobile">
+                <div class="logo-icon-mobile">⚡</div>
+                <div class="logo-text-mobile">
+                    <div class="logo-title-mobile">SODmAX</div>
+                    <div class="logo-subtitle-mobile">CityVerse Pro</div>
+                </div>
+            </div>
+            
+            <div class="header-actions-mobile">
+                <button class="header-btn" onclick="showNotificationsMobile()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <button class="header-btn" onclick="toggleMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- منوی کشویی -->
+        <div class="mobile-menu-overlay" id="mobileMenu">
+            <div class="menu-header-mobile">
+                <div class="user-avatar-mobile" id="userAvatar">ع</div>
+                <div class="user-info-mobile">
+                    <h4 id="userNameDisplay">علی محمدی</h4>
+                    <p>
+                        <span class="status-dot"></span>
+                        <span id="userLevelDisplay">آنلاین - سطح ۵</span>
+                    </p>
+                </div>
+            </div>
+            
+            <nav class="mobile-nav">
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">اصلی</div>
+                    <a href="#dashboard" class="nav-item-mobile active" onclick="showSectionMobile('dashboard')">
+                        <div class="nav-icon-mobile"><i class="fas fa-chart-pie"></i></div>
+                        <div class="nav-label-mobile">داشبورد</div>
+                    </a>
+                    <a href="#mining" class="nav-item-mobile" onclick="showSectionMobile('mining')">
+                        <div class="nav-icon-mobile"><i class="fas fa-hard-hat"></i></div>
+                        <div class="nav-label-mobile">استخراج</div>
+                        <span class="nav-badge-mobile">جدید</span>
+                    </a>
+                    <a href="#wallet" class="nav-item-mobile" onclick="showSectionMobile('wallet')">
+                        <div class="nav-icon-mobile"><i class="fas fa-wallet"></i></div>
+                        <div class="nav-label-mobile">کیف پول</div>
+                    </a>
+                    <a href="#invite" class="nav-item-mobile" onclick="showSectionMobile('invite')">
+                        <div class="nav-icon-mobile"><i class="fas fa-user-plus"></i></div>
+                        <div class="nav-label-mobile">دعوت دوستان</div>
+                        <span class="nav-badge-mobile" id="inviteBadge">24</span>
+                    </a>
+                </div>
+                
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">بازی و سرگرمی</div>
+                    <a href="#missions" class="nav-item-mobile" onclick="showSectionMobile('missions')">
+                        <div class="nav-icon-mobile"><i class="fas fa-tasks"></i></div>
+                        <div class="nav-label-mobile">مأموریت‌ها</div>
+                        <span class="nav-badge-mobile">3</span>
+                    </a>
+                    <a href="#rewards" class="nav-item-mobile" onclick="showSectionMobile('rewards')">
+                        <div class="nav-icon-mobile"><i class="fas fa-gift"></i></div>
+                        <div class="nav-label-mobile">پاداش‌ها</div>
+                    </a>
+                </div>
+                
+                <div class="nav-group-mobile">
+                    <div class="nav-group-title-mobile">سیستم</div>
+                    <a href="#support" class="nav-item-mobile" onclick="showSectionMobile('support')">
+                        <div class="nav-icon-mobile"><i class="fas fa-headset"></i></div>
+                        <div class="nav-label-mobile">پشتیبانی</div>
+                    </a>
+                    <a href="#settings" class="nav-item-mobile" onclick="showSectionMobile('settings')">
+                        <div class="nav-icon-mobile"><i class="fas fa-cog"></i></div>
+                        <div class="nav-label-mobile">تنظیمات</div>
+                    </a>
+                    <a href="#profile" class="nav-item-mobile" onclick="showSectionMobile('profile')">
+                        <div class="nav-icon-mobile"><i class="fas fa-user"></i></div>
+                        <div class="nav-label-mobile">پروفایل</div>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="menu-stats-mobile">
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuSodBalance">1.8M</div>
+                    <div class="stat-label-menu">SOD</div>
+                </div>
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuTomanBalance">28K</div>
+                    <div class="stat-label-menu">تومان</div>
+                </div>
+                <div class="menu-stat">
+                    <div class="stat-value-menu" id="menuTotalEarned">124K</div>
+                    <div class="stat-label-menu">درآمد کل</div>
+                </div>
+            </div>
         </div>
+        
+        <!-- محتوای اصلی -->
+        <main class="mobile-content">
+            <!-- داشبورد -->
+            <section id="dashboard" class="content-section-mobile active">
+                <!-- آمار سریع -->
+                <div class="quick-stats-mobile">
+                    <div class="quick-stat" onclick="showModalMobile('walletModal')">
+                        <div class="stat-main-mobile" id="quickSodBalance">1.8M</div>
+                        <div class="stat-label-mobile">SOD</div>
+                    </div>
+                    <div class="quick-stat" onclick="showModalMobile('walletModal')">
+                        <div class="stat-main-mobile" id="quickTomanBalance">28K</div>
+                        <div class="stat-label-mobile">تومان</div>
+                    </div>
+                    <div class="quick-stat" onclick="showModalMobile('userModal')">
+                        <div class="stat-main-mobile" id="quickReferralCount">24</div>
+                        <div class="stat-label-mobile">زیرمجموعه</div>
+                    </div>
+                </div>
+                
+                <!-- مرکز استخراج -->
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-hard-hat"></i>
+                        مرکز استخراج SOD
+                    </h3>
+                    
+                    <div class="miner-mobile-container">
+                        <div class="miner-3d-mobile" onclick="manualMineMobile()">
+                            <div class="miner-core-mobile">
+                                <div class="core-icon-mobile">⚡</div>
+                                <div class="click-reward-mobile" id="clickRewardMobile">+180 SOD</div>
+                                <div style="color: var(--text-tertiary); font-size: 12px;">
+                                    برای استخراج کلیک کنید
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mining-controls-mobile">
+                            <button class="mining-btn-mobile" onclick="toggleAutoMiningMobile()">
+                                <i class="fas fa-robot"></i>
+                                <span>خودکار</span>
+                            </button>
+                            <button class="mining-btn-mobile" onclick="boostMiningMobile()">
+                                <i class="fas fa-bolt"></i>
+                                <span>افزایش قدرت</span>
+                            </button>
+                            <button class="mining-btn-mobile" onclick="upgradeMinerMobile()">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>ارتقاء</span>
+                            </button>
+                            <button class="mining-btn-mobile" onclick="showMiningStatsMobile()">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>آمار</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- مأموریت‌های فعال -->
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-tasks"></i>
+                        مأموریت‌های فعال
+                    </h3>
+                    
+                    <div class="mission-item-mobile" onclick="completeMissionMobile(1)">
+                        <div class="mission-header-mobile">
+                            <div class="mission-name-mobile">۱۰۰ کلیک در بازی</div>
+                            <div class="mission-reward-mobile">+۵۰۰ تومان</div>
+                        </div>
+                        <div class="progress-bar-mobile">
+                            <div class="progress-fill-mobile" id="mission1Progress" style="width: 45%"></div>
+                        </div>
+                        <div class="progress-text-mobile">
+                            <span>پیشرفت</span>
+                            <span id="mission1Text">۴۵/۱۰۰</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mission-item-mobile" onclick="completeMissionMobile(2)">
+                        <div class="mission-header-mobile">
+                            <div class="mission-name-mobile">دعوت ۵ دوست</div>
+                            <div class="mission-reward-mobile">+۱,۰۰۰ تومان</div>
+                        </div>
+                        <div class="progress-bar-mobile">
+                            <div class="progress-fill-mobile" id="mission2Progress" style="width: 40%"></div>
+                        </div>
+                        <div class="progress-text-mobile">
+                            <span>پیشرفت</span>
+                            <span id="mission2Text">۲/۵</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mobile btn-mobile-secondary" style="margin-top: var(--space-md);" onclick="showAllMissionsMobile()">
+                        <i class="fas fa-list"></i>
+                        مشاهده همه مأموریت‌ها
+                    </button>
+                </div>
+            </section>
+            
+            <!-- استخراج -->
+            <section id="mining" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-chart-line"></i>
+                        آمار استخراج
+                    </h3>
+                    
+                    <div class="quick-stats-mobile">
+                        <div class="quick-stat">
+                            <div class="stat-main-mobile" id="miningPowerMobile">18x</div>
+                            <div class="stat-label-mobile">قدرت</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="stat-main-mobile" id="miningTodayMobile">2,450</div>
+                            <div class="stat-label-mobile">امروز</div>
+                        </div>
+                        <div class="quick-stat">
+                            <div class="stat-main-mobile" id="miningTotalMobile">1.8M</div>
+                            <div class="stat-label-mobile">کل</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: var(--space-lg) 0;">
+                        <h4 style="font-size: 14px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">
+                            <i class="fas fa-history"></i>
+                            تاریخچه استخراج
+                        </h4>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg);">
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; padding: var(--space-xs) 0;">
+                                <span>امروز</span>
+                                <span id="miningTodayText">+2,450 SOD</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; padding: var(--space-xs) 0; color: var(--text-tertiary);">
+                                <span>دیروز</span>
+                                <span>+3,210 SOD</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; padding: var(--space-xs) 0; color: var(--text-tertiary);">
+                                <span>هفته جاری</span>
+                                <span>+15,840 SOD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-crown"></i>
+                        ارتقاء ماینر
+                    </h3>
+                    
+                    <div style="text-align: center; margin: var(--space-lg) 0;">
+                        <div style="font-size: 36px; font-weight: 900; color: var(--primary); margin-bottom: var(--space-sm);">
+                            سطح <span id="minerLevel">۳</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-tertiary);">
+                            تا سطح بعدی: <span id="nextLevelCost">۵۰,۰۰۰</span> SOD
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-lg);">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: var(--space-xs);">
+                            <span>قدرت فعلی</span>
+                            <span id="currentPower">۱۸x</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: var(--space-xs); color: var(--text-tertiary);">
+                            <span>قدرت بعدی</span>
+                            <span id="nextPower">۲۳x</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-tertiary);">
+                            <span>هزینه ارتقاء</span>
+                            <span id="upgradeCost">۵۰,۰۰۰ SOD</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mobile btn-mobile-premium" onclick="upgradeMinerMobile()">
+                        <i class="fas fa-arrow-up"></i>
+                        ارتقاء ماینر (<span id="upgradeCostBtn">۵۰K</span> SOD)
+                    </button>
+                </div>
+            </section>
+            
+            <!-- کیف پول -->
+            <section id="wallet" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-wallet"></i>
+                        کیف پول چند ارزی
+                    </h3>
+                    
+                    <div class="wallet-balance-item" onclick="showModalMobile('walletModal')">
+                        <div class="wallet-icon" style="background: rgba(0, 102, 255, 0.2); color: var(--primary);">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="wallet-info">
+                            <div class="wallet-amount" id="walletSodBalance">1,845,200</div>
+                            <div class="wallet-currency">SOD</div>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-balance-item" onclick="showModalMobile('walletModal')">
+                        <div class="wallet-icon" style="background: rgba(0, 212, 170, 0.2); color: var(--secondary);">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="wallet-info">
+                            <div class="wallet-amount" id="walletTomanBalance">28,400</div>
+                            <div class="wallet-currency">تومان</div>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-balance-item" onclick="showModalMobile('walletModal')">
+                        <div class="wallet-icon" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="wallet-info">
+                            <div class="wallet-amount">120.5</div>
+                            <div class="wallet-currency">USDT</div>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-actions-row">
+                        <button class="wallet-action-row-btn" style="background: var(--gradient-secondary); color: white;" onclick="withdrawTomanMobile()">
+                            <i class="fas fa-download"></i>
+                            برداشت
+                        </button>
+                        <button class="wallet-action-row-btn" style="background: rgba(255, 255, 255, 0.1); color: var(--text-primary);" onclick="buySodMobile()">
+                            <i class="fas fa-shopping-cart"></i>
+                            خرید SOD
+                        </button>
+                        <button class="wallet-action-row-btn" style="background: var(--gradient-primary); color: white;" onclick="convertCurrencyMobile()">
+                            <i class="fas fa-exchange-alt"></i>
+                            تبدیل
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-history"></i>
+                        آخرین تراکنش‌ها
+                    </h3>
+                    
+                    <div style="max-height: 300px; overflow-y: auto;" id="transactionHistory">
+                        <div style="display: flex; align-items: center; padding: var(--space-md); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="width: 40px; height: 40px; background: rgba(0, 212, 170, 0.2); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: var(--secondary); margin-left: var(--space-md);">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">برداشت تومان</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">امروز - ۱۴:۳۰</div>
+                            </div>
+                            <div style="font-size: 14px; font-weight: 700; color: var(--success);">
+                                +۵۰,۰۰۰ تومان
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- دعوت دوستان -->
+            <section id="invite" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-user-plus"></i>
+                        دعوت دوستان و کسب درآمد
+                    </h3>
+                    
+                    <div style="text-align: center; margin-bottom: var(--space-xl);">
+                        <div style="font-size: 48px; font-weight: 900; color: var(--primary); margin-bottom: var(--space-sm);">
+                            🤝
+                        </div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--text-primary); margin-bottom: var(--space-xs);" id="referralCountMobile">
+                            ۲۴ دوست دعوت کرده‌اید
+                        </div>
+                        <div style="font-size: 16px; color: var(--text-tertiary); margin-bottom: var(--space-lg);">
+                            تاکنون <span style="color: var(--secondary); font-weight: 700;" id="totalReferralEarningsMobile">۱۲۴,۰۰۰</span> تومان از دعوت دوستان کسب کرده‌اید
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <div style="background: rgba(0, 102, 255, 0.1); border: 2px dashed var(--primary); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center; margin-bottom: var(--space-md);">
+                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">
+                                لینک دعوت اختصاصی شما
+                            </div>
+                            <div style="font-size: 14px; font-weight: 700; color: var(--primary); word-break: break-all; margin-bottom: var(--space-md);" id="referralLinkMobile">
+                                https://sodmax.city/invite/ali123
+                            </div>
+                            <button class="btn-mobile btn-mobile-primary" onclick="copyReferralLink()">
+                                <i class="fas fa-copy"></i>
+                                کپی لینک دعوت
+                            </button>
+                        </div>
+                        
+                        <div style="background: rgba(0, 212, 170, 0.1); border: 1px solid rgba(0, 212, 170, 0.3); border-radius: var(--radius-lg); padding: var(--space-md);">
+                            <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+                                <div style="width: 36px; height: 36px; background: var(--gradient-secondary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 900; color: var(--text-primary);">پاداش دعوت</div>
+                                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                                        به ازای هر دعوت موفق: <span style="color: var(--secondary); font-weight: 700;">۱,۰۰۰ تومان</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 24px; font-weight: 900; color: var(--primary);" id="totalInvitesMobile">۲۴</div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">کل دعوت‌ها</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 24px; font-weight: 900; color: var(--secondary);" id="activeInvitesMobile">۱۸</div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">فعال</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 24px; font-weight: 900; color: var(--accent);" id="pendingInvitesMobile">۳</div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">در انتظار</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 24px; font-weight: 900; color: var(--premium);" id="totalEarnedInvitesMobile">۱۲۴K</div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">درآمد کل</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-share-alt"></i>
+                        اشتراک‌گذاری
+                    </h3>
+                    
+                    <div class="share-buttons-grid">
+                        <button class="share-button" onclick="shareViaWhatsApp()">
+                            <i class="fab fa-whatsapp"></i>
+                            واتساپ
+                        </button>
+                        <button class="share-button" onclick="shareViaTelegram()">
+                            <i class="fab fa-telegram"></i>
+                            تلگرام
+                        </button>
+                        <button class="share-button" onclick="shareViaInstagram()">
+                            <i class="fab fa-instagram"></i>
+                            اینستاگرام
+                        </button>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: var(--radius-lg); padding: var(--space-md);">
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">
+                            کد دعوت اختصاصی
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                            <div style="flex: 1; background: rgba(255, 255, 255, 0.1); padding: var(--space-md); border-radius: var(--radius-md); font-family: monospace; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-align: center;" id="referralCodeMobile">
+                                ALI12345
+                            </div>
+                            <button class="btn-mobile btn-mobile-primary" style="width: auto; padding: var(--space-md) var(--space-lg);" onclick="copyReferralCode()">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- مأموریت‌ها -->
+            <section id="missions" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-trophy"></i>
+                        دستاوردهای شما
+                    </h3>
+                    
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-bottom: var(--space-lg);">
+                        <div style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: 12px; font-weight: 600;">
+                            🥇 طلایی
+                        </div>
+                        <div style="background: var(--gradient-secondary); color: white; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: 12px; font-weight: 600;">
+                            🤝 دعوت‌کننده
+                        </div>
+                        <div style="background: var(--gradient-accent); color: white; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: 12px; font-weight: 600;">
+                            ⚡ سریع
+                        </div>
+                        <div style="background: var(--gradient-premium); color: #000; padding: var(--space-xs) var(--space-md); border-radius: var(--radius-full); font-size: 12px; font-weight: 600;">
+                            💎 الماسی
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; font-weight: 900; color: var(--text-primary); margin-bottom: var(--space-xs);" id="completedMissions">۴۸</div>
+                        <div style="font-size: 12px; color: var(--text-tertiary);">مأموریت تکمیل شده</div>
+                    </div>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-star"></i>
+                        مأموریت‌های ویژه
+                    </h3>
+                    
+                    <div class="mission-item-mobile">
+                        <div class="mission-header-mobile">
+                            <div class="mission-name-mobile">رسیدن به سطح ۱۰</div>
+                            <div class="mission-reward-mobile">+۱۰,۰۰۰ تومان</div>
+                        </div>
+                        <div class="progress-bar-mobile">
+                            <div class="progress-fill-mobile" style="width: 50%"></div>
+                        </div>
+                        <div class="progress-text-mobile">
+                            <span>پیشرفت</span>
+                            <span>سطح ۵/۱۰</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mission-item-mobile">
+                        <div class="mission-header-mobile">
+                            <div class="mission-name-mobile">دعوت ۱۰۰ زیرمجموعه</div>
+                            <div class="mission-reward-mobile">+۵۰,۰۰۰ تومان</div>
+                        </div>
+                        <div class="progress-bar-mobile">
+                            <div class="progress-fill-mobile" style="width: 24%"></div>
+                        </div>
+                        <div class="progress-text-mobile">
+                            <span>پیشرفت</span>
+                            <span>۲۴/۱۰۰</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mission-item-mobile">
+                        <div class="mission-header-mobile">
+                            <div class="mission-name-mobile">استخراج ۱۰ میلیون SOD</div>
+                            <div class="mission-reward-mobile">+۱۰۰,۰۰۰ تومان</div>
+                        </div>
+                        <div class="progress-bar-mobile">
+                            <div class="progress-fill-mobile" style="width: 18.5%"></div>
+                        </div>
+                        <div class="progress-text-mobile">
+                            <span>پیشرفت</span>
+                            <span>۱.۸۵M/۱۰M</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- پاداش‌ها -->
+            <section id="rewards" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-gift"></i>
+                        پاداش‌های ویژه
+                    </h3>
+                    
+                    <div class="rewards-grid-mobile">
+                        <div class="reward-item-mobile" onclick="claimRewardMobile('sod')">
+                            <div class="reward-icon-mobile">🎁</div>
+                            <div class="reward-amount-mobile">۱۰,۰۰۰</div>
+                            <div class="reward-type-mobile">SOD</div>
+                        </div>
+                        
+                        <div class="reward-item-mobile" onclick="claimRewardMobile('toman')">
+                            <div class="reward-icon-mobile">💰</div>
+                            <div class="reward-amount-mobile">۵,۰۰۰</div>
+                            <div class="reward-type-mobile">تومان</div>
+                        </div>
+                        
+                        <div class="reward-item-mobile" onclick="claimRewardMobile('boost')">
+                            <div class="reward-icon-mobile">⚡</div>
+                            <div class="reward-amount-mobile">۳x</div>
+                            <div class="reward-type-mobile">بوست</div>
+                        </div>
+                        
+                        <div class="reward-item-mobile" onclick="claimRewardMobile('premium')">
+                            <div class="reward-icon-mobile">👑</div>
+                            <div class="reward-amount-mobile">۷ روز</div>
+                            <div class="reward-type-mobile">Pro</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mobile btn-mobile-success" style="margin-top: var(--space-lg);" onclick="claimAllRewardsMobile()">
+                        <i class="fas fa-gift"></i>
+                        دریافت همه پاداش‌ها
+                    </button>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-calendar-alt"></i>
+                        پاداش روزانه
+                    </h3>
+                    
+                    <div style="text-align: center; margin: var(--space-lg) 0;">
+                        <div style="font-size: 48px; font-weight: 900; color: var(--primary);">🎁</div>
+                        <div style="font-size: 16px; font-weight: 900; color: var(--text-primary); margin: var(--space-sm) 0;">
+                            پاداش روزانه شما آماده است!
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-lg);">
+                            هر روز وارد شوید و پاداش دریافت کنید
+                        </div>
+                        
+                        <button class="btn-mobile btn-mobile-primary" onclick="claimDailyReward()">
+                            <i class="fas fa-gift"></i>
+                            دریافت پاداش روزانه
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- پروفایل کاربری -->
+            <section id="profile" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-user"></i>
+                        پروفایل کاربری
+                    </h3>
+                    
+                    <div style="text-align: center; margin-bottom: var(--space-xl);">
+                        <div class="user-avatar-mobile" style="width: 100px; height: 100px; margin: 0 auto var(--space-lg); font-size: 40px;" id="profileAvatar">
+                            ع
+                        </div>
+                        <h4 style="font-size: 24px; font-weight: 900; margin-bottom: var(--space-xs); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="profileName">
+                            علی محمدی
+                        </h4>
+                        <p style="color: var(--text-tertiary); font-size: 14px; margin-bottom: var(--space-md);" id="profilePhone">
+                            <i class="fas fa-phone"></i> ۰۹۱۲۳۴۵۶۷۸۹
+                        </p>
+                        <div style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-lg); border-radius: var(--radius-full); display: inline-block; font-size: 12px; font-weight: 700;">
+                            سطح <span id="profileLevel">۵</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: var(--space-xl);">
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 12px; color: var(--text-tertiary);">عضویت از</div>
+                            <div style="font-size: 14px; font-weight: 900; color: var(--text-primary);" id="profileJoinDate">۱۴۰۲/۰۵/۱۰</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 12px; color: var(--text-tertiary);">آخرین ورود</div>
+                            <div style="font-size: 14px; font-weight: 900; color: var(--text-primary);" id="profileLastLogin">امروز</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 12px; color: var(--text-tertiary);">زیرمجموعه</div>
+                            <div style="font-size: 14px; font-weight: 900; color: var(--primary);" id="profileReferrals">۲۴</div>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                            <div style="font-size: 12px; color: var(--text-tertiary);">درآمد کل</div>
+                            <div style="font-size: 14px; font-weight: 900; color: var(--secondary);" id="profileTotalEarned">۱۲۴K</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <button class="btn-mobile btn-mobile-secondary" style="margin-bottom: var(--space-sm);" onclick="editProfileMobile()">
+                            <i class="fas fa-edit"></i>
+                            ویرایش پروفایل
+                        </button>
+                        <button class="btn-mobile btn-mobile-secondary" style="margin-bottom: var(--space-sm);" onclick="changePasswordMobile()">
+                            <i class="fas fa-key"></i>
+                            تغییر رمز عبور
+                        </button>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn-mobile" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);" onclick="logoutUser()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            خروج از حساب
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- پشتیبانی -->
+            <section id="support" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-headset"></i>
+                        پشتیبانی آنلاین
+                    </h3>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                            <div style="width: 48px; height: 48px; background: var(--gradient-primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 16px; font-weight: 900; color: var(--text-primary);">چت آنلاین</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">پاسخگویی ۲۴ ساعته</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md);">
+                            <div style="width: 48px; height: 48px; background: var(--gradient-secondary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 16px; font-weight: 900; color: var(--text-primary);">سوالات متداول</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">پاسخ به رایج‌ترین سوالات</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                            <div style="width: 48px; height: 48px; background: var(--gradient-accent); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 16px; font-weight: 900; color: var(--text-primary);">آموزش‌ها</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">ویدیو و راهنمای تصویری</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-mobile btn-mobile-primary" onclick="startChatSupport()">
+                        <i class="fas fa-comment-dots"></i>
+                        شروع گفتگوی آنلاین
+                    </button>
+                </div>
+            </section>
+            
+            <!-- تنظیمات -->
+            <section id="settings" class="content-section-mobile">
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-user-cog"></i>
+                        تنظیمات حساب
+                    </h3>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <span style="font-size: 14px; color: var(--text-primary);">حالت شب</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="darkModeToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <span style="font-size: 14px; color: var(--text-primary);">اعلان‌ها</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="notificationsToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <span style="font-size: 14px; color: var(--text-primary);">صدا</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="soundToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) 0;">
+                            <span style="font-size: 14px; color: var(--text-primary);">ویبره</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="vibrationToggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: var(--space-lg);">
+                        <button class="btn-mobile btn-mobile-secondary" style="margin-bottom: var(--space-sm);" onclick="changePasswordMobile()">
+                            <i class="fas fa-key"></i>
+                            تغییر رمز عبور
+                        </button>
+                        <button class="btn-mobile btn-mobile-secondary" style="margin-bottom: var(--space-sm);" onclick="editProfileMobile()">
+                            <i class="fas fa-edit"></i>
+                            ویرایش پروفایل
+                        </button>
+                        <button class="btn-mobile btn-mobile-secondary" onclick="languageSettingsMobile()">
+                            <i class="fas fa-language"></i>
+                            زبان و منطقه
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mobile-card">
+                    <h3 class="card-title-mobile">
+                        <i class="fas fa-info-circle"></i>
+                        درباره برنامه
+                    </h3>
+                    
+                    <div style="text-align: center;">
+                        <div style="font-size: 36px; color: var(--primary); margin-bottom: var(--space-sm);">
+                            ⚡🏙️
+                        </div>
+                        <div style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: var(--space-xs);">
+                            SODmAX CityVerse
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-lg);">
+                            نسخه ۲.۰.۰ | Pro Edition
+                        </div>
+                        
+                        <div style="font-size: 12px; color: var(--text-secondary); text-align: right; line-height: 1.6;">
+                            <p>پلتفرم پیشرفته درآمدزایی و بازی‌سازی</p>
+                            <p>استخراج هوشمند • شهر دیجیتال • کسب‌وکار آنلاین</p>
+                            <p>© ۲۰۲۴ تمامی حقوق محفوظ است</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- نوار پایین -->
+        <nav class="mobile-bottom-nav">
+            <a href="#dashboard" class="bottom-nav-item active" onclick="showSectionMobile('dashboard')">
+                <i class="fas fa-home bottom-nav-icon"></i>
+                <span class="bottom-nav-label">داشبورد</span>
+            </a>
+            <a href="#mining" class="bottom-nav-item" onclick="showSectionMobile('mining')">
+                <i class="fas fa-hard-hat bottom-nav-icon"></i>
+                <span class="bottom-nav-label">استخراج</span>
+            </a>
+            <a href="#wallet" class="bottom-nav-item" onclick="showSectionMobile('wallet')">
+                <i class="fas fa-wallet bottom-nav-icon"></i>
+                <span class="bottom-nav-label">کیف پول</span>
+            </a>
+            <a href="#invite" class="bottom-nav-item" onclick="showSectionMobile('invite')">
+                <i class="fas fa-user-plus bottom-nav-icon"></i>
+                <span class="bottom-nav-label">دعوت دوستان</span>
+            </a>
+            <a href="#rewards" class="bottom-nav-item" onclick="showSectionMobile('rewards')">
+                <i class="fas fa-gift bottom-nav-icon"></i>
+                <span class="bottom-nav-label">پاداش‌ها</span>
+            </a>
+        </nav>
+        
+        <!-- مودال کیف پول -->
+        <div class="modal-mobile-overlay" id="walletModal">
+            <div class="modal-mobile-content">
+                <div class="modal-header-mobile">
+                    <h3 class="modal-title-mobile">کیف پول چند ارزی</h3>
+                    <button class="close-modal-mobile" onclick="closeModalMobile('walletModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: var(--space-xl);">
+                    <div style="background: rgba(0, 102, 255, 0.15); padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center; margin-bottom: var(--space-md);">
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">موجودی SOD</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--primary);" id="modalSodBalance">1,845,200 SOD</div>
+                    </div>
+                    
+                    <div style="background: rgba(0, 212, 170, 0.15); padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center; margin-bottom: var(--space-md);">
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">موجودی تومان</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--secondary);" id="modalTomanBalance">28,400 تومان</div>
+                    </div>
+                    
+                    <div style="background: rgba(59, 130, 246, 0.15); padding: var(--space-lg); border-radius: var(--radius-lg); text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-sm);">موجودی USDT</div>
+                        <div style="font-size: 24px; font-weight: 900; color: #3b82f6;">120.5 USDT</div>
+                    </div>
+                </div>
+                
+                <div class="wallet-actions-row">
+                    <button class="wallet-action-row-btn" style="background: var(--gradient-secondary); color: white;" onclick="withdrawTomanMobile()">
+                        <i class="fas fa-download"></i>
+                        برداشت
+                    </button>
+                    <button class="wallet-action-row-btn" style="background: rgba(255, 255, 255, 0.1); color: var(--text-primary);" onclick="buySodMobile()">
+                        <i class="fas fa-shopping-cart"></i>
+                        خرید
+                    </button>
+                    <button class="wallet-action-row-btn" style="background: var(--gradient-primary); color: white;" onclick="convertCurrencyMobile()">
+                        <i class="fas fa-exchange-alt"></i>
+                        تبدیل
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- مودال کاربر -->
+        <div class="modal-mobile-overlay" id="userModal">
+            <div class="modal-mobile-content">
+                <div class="modal-header-mobile">
+                    <h3 class="modal-title-mobile">پروفایل کاربری</h3>
+                    <button class="close-modal-mobile" onclick="closeModalMobile('userModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: var(--space-xl);">
+                    <div class="user-avatar-mobile" style="width: 80px; height: 80px; margin: 0 auto var(--space-lg); font-size: 32px;" id="modalUserAvatar">
+                        ع
+                    </div>
+                    <h4 style="font-size: 20px; font-weight: 900; margin-bottom: var(--space-xs); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="modalUserName">
+                        علی محمدی
+                    </h4>
+                    <p style="color: var(--text-tertiary); font-size: 12px;" id="modalUserPhone">
+                        <i class="fas fa-calendar-alt"></i> عضو از ۱۴۰۲/۰۵/۱۰
+                    </p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: var(--space-xl);">
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-tertiary);">سطح</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--primary);" id="modalUserLevel">۵</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-tertiary);">درآمد کل</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--secondary);" id="modalUserTotalEarned">۱۲۴K</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-tertiary);">زیرمجموعه</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--city-purple);" id="modalUserReferrals">۲۴</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: var(--space-md); border-radius: var(--radius-lg); text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-tertiary);">مأموریت</div>
+                        <div style="font-size: 24px; font-weight: 900; color: var(--city-yellow);" id="modalUserMissions">۴۸</div>
+                    </div>
+                </div>
+                
+                <button class="btn-mobile btn-mobile-primary" style="width: 100%;" onclick="editProfileMobile()">
+                    <i class="fas fa-edit"></i>
+                    ویرایش پروفایل
+                </button>
+            </div>
+        </div>
+        
+        <!-- مودال نوتیفیکیشن -->
+        <div class="modal-mobile-overlay" id="notificationModal">
+            <div class="modal-mobile-content">
+                <div class="modal-header-mobile">
+                    <h3 class="modal-title-mobile">نوتیفیکیشن‌ها</h3>
+                    <button class="close-modal-mobile" onclick="closeModalMobile('notificationModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div style="max-height: 400px; overflow-y: auto;" id="notificationsList">
+                    <div style="display: flex; align-items: flex-start; padding: var(--space-md); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="width: 40px; height: 40px; background: var(--gradient-primary); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; margin-left: var(--space-md); flex-shrink: 0;">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary);">🎉 به روزرسانی جدید</div>
+                            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: var(--space-xs);">سیستم 3D و افکت‌های جدید اضافه شد!</div>
+                            <div style="font-size: 11px; color: var(--text-tertiary);">۵ دقیقه پیش</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- کانتینر توست -->
+        <div class="toast-container-mobile" id="toastContainerMobile"></div>
     </div>
 
     <!-- فایل‌های JavaScript -->
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/user-manager.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/mining.js"></script>
+    <script src="assets/js/ui.js"></script>
 </body>
 </html>
