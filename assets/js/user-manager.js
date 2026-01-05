@@ -98,9 +98,12 @@ class UserManager {
     }
     
     register(name, phone, password, referralCode = null) {
+        console.log('📝 شروع ثبت‌نام:', { name, phone });
+        
         const users = this.getUsers();
         
         if (users.find(user => user.phone === phone)) {
+            console.log('❌ شماره موبایل تکراری');
             return { success: false, message: "این شماره موبایل قبلاً ثبت‌نام کرده است" };
         }
         
@@ -128,10 +131,15 @@ class UserManager {
             referralLink: `https://sodmax.city/invite/${this.generateReferralCode(name)}`
         };
         
+        console.log('👤 کاربر جدید:', newUser);
+        
         let referralBonus = 0;
         if (referralCode) {
+            console.log('🎁 کد دعوت وارد شده:', referralCode);
             const referrer = users.find(user => user.referralCode === referralCode);
             if (referrer) {
+                console.log('✅ دعوت‌کننده یافت شد:', referrer.name);
+                
                 referrer.tomanBalance += 1000;
                 referrer.totalEarned += 1000;
                 referrer.referralEarnings += 1000;
@@ -160,11 +168,14 @@ class UserManager {
                     read: false
                 });
                 localStorage.setItem(this.notificationsKey, JSON.stringify(notifications));
+            } else {
+                console.log('❌ کد دعوت نامعتبر است');
             }
         }
         
         users.push(newUser);
         localStorage.setItem(this.usersKey, JSON.stringify(users));
+        console.log('💾 کاربر در localStorage ذخیره شد');
         
         const notifications = this.getNotifications();
         notifications.push({
@@ -190,6 +201,7 @@ class UserManager {
         });
         localStorage.setItem(this.referralsKey, JSON.stringify(referrals));
         
+        console.log('✅ ثبت‌نام کامل شد');
         return { 
             success: true, 
             user: newUser,
@@ -204,27 +216,35 @@ class UserManager {
     }
     
     login(phone, password) {
+        console.log('🔐 شروع ورود:', { phone });
+        
         const users = this.getUsers();
         const user = users.find(user => user.phone === phone);
         
         if (!user) {
+            console.log('❌ کاربر یافت نشد');
             return { success: false, message: "شماره موبایل یا رمز عبور اشتباه است" };
         }
         
         if (!this.verifyPassword(password, user.password)) {
+            console.log('❌ رمز عبور اشتباه');
             return { success: false, message: "شماره موبایل یا رمز عبور اشتباه است" };
         }
         
+        console.log('✅ احراز هویت موفق:', user.name);
+        
         user.lastLogin = new Date().toLocaleDateString('fa-IR');
-        localStorage.setItem(this.usersKey, JSON.stringify(users));
+        this.updateUser(user);
         
         localStorage.setItem(this.currentUserKey, JSON.stringify(user));
         this.currentUser = user;
         
+        console.log('💾 کاربر جاری ذخیره شد');
         return { success: true, user: user };
     }
     
     logout() {
+        console.log('👋 خروج کاربر');
         localStorage.removeItem(this.currentUserKey);
         this.currentUser = null;
         return true;
@@ -234,13 +254,21 @@ class UserManager {
         if (!this.currentUser) {
             const storedUser = localStorage.getItem(this.currentUserKey);
             if (storedUser) {
-                this.currentUser = JSON.parse(storedUser);
+                try {
+                    this.currentUser = JSON.parse(storedUser);
+                    console.log('👤 کاربر جاری از localStorage بازیابی شد:', this.currentUser.name);
+                } catch (error) {
+                    console.error('❌ خطا در بازیابی کاربر:', error);
+                    this.currentUser = null;
+                }
             }
         }
         return this.currentUser;
     }
     
     updateUser(updatedUser) {
+        console.log('✏️ به‌روزرسانی کاربر:', updatedUser.name);
+        
         const users = this.getUsers();
         const index = users.findIndex(user => user.id === updatedUser.id);
         
@@ -253,13 +281,27 @@ class UserManager {
                 localStorage.setItem(this.currentUserKey, JSON.stringify(updatedUser));
             }
             
+            console.log('✅ کاربر به‌روزرسانی شد');
             return true;
         }
+        
+        console.log('❌ کاربر برای به‌روزرسانی یافت نشد');
         return false;
     }
     
     getUsers() {
-        return JSON.parse(localStorage.getItem(this.usersKey)) || [];
+        const users = localStorage.getItem(this.usersKey);
+        if (!users) {
+            console.log('📁 هیچ کاربری در localStorage وجود ندارد');
+            return [];
+        }
+        
+        try {
+            return JSON.parse(users);
+        } catch (error) {
+            console.error('❌ خطا در خواندن کاربران:', error);
+            return [];
+        }
     }
     
     getTransactions(userId) {
@@ -316,64 +358,5 @@ class UserManager {
             return true;
         }
         return false;
-    }
-    
-    addReferral(userId) {
-        const referrals = this.getReferrals(userId);
-        if (referrals) {
-            referrals.totalInvites++;
-            referrals.pendingInvites++;
-            this.updateReferrals(userId, referrals);
-            
-            const user = this.getUsers().find(u => u.id === userId);
-            if (user) {
-                user.referralCount++;
-                this.updateUser(user);
-            }
-            
-            return referrals;
-        }
-        return null;
-    }
-    
-    confirmReferral(userId) {
-        const referrals = this.getReferrals(userId);
-        if (referrals && referrals.pendingInvites > 0) {
-            referrals.pendingInvites--;
-            referrals.activeInvites++;
-            referrals.totalEarned += 1000;
-            this.updateReferrals(userId, referrals);
-            
-            const user = this.getUsers().find(u => u.id === userId);
-            if (user) {
-                user.referralEarnings += 1000;
-                user.tomanBalance += 1000;
-                user.totalEarned += 1000;
-                this.updateUser(user);
-                
-                this.addTransaction(userId, {
-                    type: "پاداش دعوت",
-                    amount: 1000,
-                    currency: "تومان",
-                    status: "موفق",
-                    icon: "fa-user-plus",
-                    color: "var(--secondary)"
-                });
-                
-                const notifications = this.getNotifications();
-                notifications.push({
-                    id: Date.now(),
-                    userId: userId,
-                    title: "🤝 دعوت موفق",
-                    message: "دوست شما ثبت‌نام و تأیید شد! +۱,۰۰۰ تومان پاداش",
-                    time: "همین حالا",
-                    read: false
-                });
-                localStorage.setItem(this.notificationsKey, JSON.stringify(notifications));
-            }
-            
-            return referrals;
-        }
-        return null;
     }
 }
