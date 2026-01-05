@@ -1,5 +1,8 @@
 // ==================== سیستم احراز هویت ====================
 
+// متغیرهای گلوبال
+let userManager;
+
 // نمایش فرم ثبت‌نام
 function showRegisterForm() {
     document.getElementById('loginForm').classList.add('hidden');
@@ -14,85 +17,118 @@ function showLoginForm() {
 
 // نمایش فرم فراموشی رمز
 function showForgotPasswordForm() {
-    showToastMobile('🔐 بازیابی رمز عبور', 'این قابلیت به زودی فعال خواهد شد!', 'info');
+    alert('🔐 بازیابی رمز عبور\nاین قابلیت به زودی فعال خواهد شد!');
 }
 
 // نمایش اپلیکیشن
 function showApp() {
     document.getElementById('authContainer').classList.add('hidden');
-    document.getElementById('appContainer').classList.add('active');
+    document.getElementById('appContainer').classList.remove('hidden');
 }
 
 // نمایش فرم احراز هویت
 function showAuth() {
     document.getElementById('authContainer').classList.remove('hidden');
-    document.getElementById('appContainer').classList.remove('active');
+    document.getElementById('appContainer').classList.add('hidden');
     showRegisterForm();
 }
 
 // تنظیم رویدادهای فرم‌ها
 function setupAuthEvents() {
+    console.log('🔧 تنظیم رویدادهای احراز هویت...');
+    
     // تغییر بین فرم‌ها
-    document.getElementById('showLoginBtn').addEventListener('click', showLoginForm);
-    document.getElementById('showRegisterBtn').addEventListener('click', showRegisterForm);
-    document.getElementById('forgotPasswordBtn').addEventListener('click', showForgotPasswordForm);
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+    
+    if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', showLoginForm);
+        console.log('✅ دکمه "نمایش ورود" تنظیم شد');
+    }
+    
+    if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', showRegisterForm);
+        console.log('✅ دکمه "نمایش ثبت‌نام" تنظیم شد');
+    }
+    
+    if (forgotPasswordBtn) {
+        forgotPasswordBtn.addEventListener('click', showForgotPasswordForm);
+        console.log('✅ دکمه "فراموشی رمز" تنظیم شد');
+    }
     
     // نمایش/پنهان کردن رمز عبور
-    document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
-        const passwordInput = document.getElementById('registerPassword');
-        const icon = this.querySelector('i');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-    
-    document.getElementById('toggleRegisterConfirmPassword').addEventListener('click', function() {
-        const passwordInput = document.getElementById('registerConfirmPassword');
-        const icon = this.querySelector('i');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
-    
-    document.getElementById('toggleLoginPassword').addEventListener('click', function() {
-        const passwordInput = document.getElementById('loginPassword');
-        const icon = this.querySelector('i');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-        }
-    });
+    setupPasswordToggles();
     
     // ثبت‌نام
-    document.getElementById('registerFormElement').addEventListener('submit', handleRegister);
+    const registerForm = document.getElementById('registerFormElement');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+        console.log('✅ فرم ثبت‌نام تنظیم شد');
+    }
     
     // ورود
-    document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+    const loginForm = document.getElementById('loginFormElement');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+        console.log('✅ فرم ورود تنظیم شد');
+    }
+    
+    console.log('✅ همه رویدادهای احراز هویت تنظیم شدند');
+}
+
+// تنظیم دکمه‌های نمایش رمز
+function setupPasswordToggles() {
+    // ثبت‌نام
+    const toggleRegisterPassword = document.getElementById('toggleRegisterPassword');
+    if (toggleRegisterPassword) {
+        toggleRegisterPassword.addEventListener('click', function() {
+            togglePasswordVisibility('registerPassword', this);
+        });
+    }
+    
+    const toggleRegisterConfirm = document.getElementById('toggleRegisterConfirmPassword');
+    if (toggleRegisterConfirm) {
+        toggleRegisterConfirm.addEventListener('click', function() {
+            togglePasswordVisibility('registerConfirmPassword', this);
+        });
+    }
+    
+    // ورود
+    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+    if (toggleLoginPassword) {
+        toggleLoginPassword.addEventListener('click', function() {
+            togglePasswordVisibility('loginPassword', this);
+        });
+    }
+}
+
+// تغییر وضعیت نمایش رمز
+function togglePasswordVisibility(inputId, button) {
+    const passwordInput = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 }
 
 // مدیریت ثبت‌نام
 function handleRegister(e) {
     e.preventDefault();
+    console.log('📝 ثبت‌نام در حال پردازش...');
+    
+    // اگر userManager وجود ندارد، ایجاد کن
+    if (!userManager) {
+        userManager = new UserManager();
+        console.log('👤 UserManager ایجاد شد');
+    }
     
     const name = document.getElementById('registerName').value.trim();
     const phone = document.getElementById('registerPhone').value.trim();
@@ -102,6 +138,7 @@ function handleRegister(e) {
     
     let hasError = false;
     
+    // اعتبارسنجی
     if (name.length < 2) {
         showError('nameError', 'نام باید حداقل ۲ کاراکتر باشد');
         hasError = true;
@@ -130,34 +167,47 @@ function handleRegister(e) {
         hideError('confirmPasswordError');
     }
     
-    if (hasError) return;
+    if (hasError) {
+        console.log('❌ خطا در اعتبارسنجی فرم');
+        return;
+    }
     
     const registerBtn = document.getElementById('registerBtn');
+    const originalText = registerBtn.innerHTML;
     registerBtn.disabled = true;
     registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ثبت‌نام...';
     
+    // شبیه‌سازی تاخیر
     setTimeout(() => {
-        const result = userManager.register(name, phone, password, referralCode);
-        
-        if (result.success) {
-            const message = referralCode ? 
-                `حساب کاربری شما با موفقیت ایجاد شد! ${result.referralBonus} SOD پاداش دعوت دریافت کردید.` :
-                'حساب کاربری شما با موفقیت ایجاد شد!';
+        try {
+            console.log('📊 ارسال اطلاعات ثبت‌نام:', { name, phone });
+            const result = userManager.register(name, phone, password, referralCode);
             
-            showToastMobile('✅ ثبت‌نام موفق', message, 'success');
-            
-            mobileClient.currentUser = result.user;
-            localStorage.setItem('sodmax_current_user', JSON.stringify(result.user));
-            
-            setTimeout(() => {
-                showApp();
-                updateMobileUI();
-                showSectionMobile('dashboard');
-            }, 1500);
-        } else {
-            showError('phoneError', result.message);
+            if (result.success) {
+                console.log('✅ ثبت‌نام موفق:', result.user.name);
+                
+                // نمایش پیام موفقیت
+                alert(`✅ ثبت‌نام موفق\nسلام ${result.user.name}!\nحساب کاربری شما با موفقیت ایجاد شد.${result.referralBonus ? `\n${result.referralBonus} SOD پاداش دعوت دریافت کردید.` : ''}`);
+                
+                // ذخیره کاربر جاری
+                localStorage.setItem('sodmax_current_user', JSON.stringify(result.user));
+                
+                // نمایش اپلیکیشن
+                setTimeout(() => {
+                    showApp();
+                    console.log('📱 اپلیکیشن نمایش داده شد');
+                }, 1000);
+            } else {
+                showError('phoneError', result.message);
+                console.log('❌ خطا در ثبت‌نام:', result.message);
+            }
+        } catch (error) {
+            console.error('🔥 خطا در ثبت‌نام:', error);
+            alert('❌ خطا در سیستم ثبت‌نام. لطفاً دوباره تلاش کنید.');
+        } finally {
+            // بازنشانی دکمه
             registerBtn.disabled = false;
-            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> ایجاد حساب کاربری';
+            registerBtn.innerHTML = originalText;
         }
     }, 1500);
 }
@@ -165,6 +215,13 @@ function handleRegister(e) {
 // مدیریت ورود
 function handleLogin(e) {
     e.preventDefault();
+    console.log('🔐 ورود در حال پردازش...');
+    
+    // اگر userManager وجود ندارد، ایجاد کن
+    if (!userManager) {
+        userManager = new UserManager();
+        console.log('👤 UserManager ایجاد شد');
+    }
     
     const phone = document.getElementById('loginPhone').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -185,29 +242,114 @@ function handleLogin(e) {
         hideError('loginPasswordError');
     }
     
-    if (hasError) return;
+    if (hasError) {
+        console.log('❌ خطا در اعتبارسنجی فرم ورود');
+        return;
+    }
     
     const loginBtn = document.getElementById('loginBtn');
+    const originalText = loginBtn.innerHTML;
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ورود...';
     
     setTimeout(() => {
-        const result = userManager.login(phone, password);
-        
-        if (result.success) {
-            showToastMobile('✅ ورود موفق', `خوش آمدید ${result.user.name}!`, 'success');
+        try {
+            console.log('📊 ارسال اطلاعات ورود:', { phone });
+            const result = userManager.login(phone, password);
             
-            mobileClient.currentUser = result.user;
-            
-            setTimeout(() => {
-                showApp();
-                updateMobileUI();
-                showSectionMobile('dashboard');
-            }, 1500);
-        } else {
-            showError('loginPhoneError', result.message);
+            if (result.success) {
+                console.log('✅ ورود موفق:', result.user.name);
+                
+                // نمایش پیام موفقیت
+                alert(`✅ ورود موفق\nخوش آمدید ${result.user.name}!`);
+                
+                // نمایش اپلیکیشن
+                setTimeout(() => {
+                    showApp();
+                    console.log('📱 اپلیکیشن نمایش داده شد');
+                }, 1000);
+            } else {
+                showError('loginPhoneError', result.message);
+                console.log('❌ خطا در ورود:', result.message);
+            }
+        } catch (error) {
+            console.error('🔥 خطا در ورود:', error);
+            alert('❌ خطا در سیستم ورود. لطفاً دوباره تلاش کنید.');
+        } finally {
+            // بازنشانی دکمه
             loginBtn.disabled = false;
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ورود به حساب';
+            loginBtn.innerHTML = originalText;
         }
     }, 1500);
+}
+
+// مقداردهی اولیه
+function initializeAuth() {
+    console.log('🚀 راه‌اندازی سیستم احراز هویت...');
+    
+    // بررسی وجود المان‌های ضروری
+    const authContainer = document.getElementById('authContainer');
+    const appContainer = document.getElementById('appContainer');
+    
+    if (!authContainer || !appContainer) {
+        console.error('❌ المان‌های اصلی صفحه یافت نشدند!');
+        return;
+    }
+    
+    console.log('✅ المان‌های صفحه یافت شدند');
+    
+    // ایجاد UserManager
+    userManager = new UserManager();
+    console.log('👤 UserManager ایجاد شد');
+    
+    // بررسی آیا کاربر وارد شده است
+    const currentUser = userManager.getCurrentUser();
+    
+    if (currentUser) {
+        console.log('👤 کاربر قبلاً وارد شده:', currentUser.name);
+        // کاربر وارد شده - اپلیکیشن نمایش داده می‌شود
+        showApp();
+    } else {
+        console.log('👤 کاربر وارد نشده - نمایش فرم‌ها');
+        // نمایش فرم‌ها
+        showAuth();
+        setupAuthEvents();
+    }
+    
+    console.log('✅ سیستم احراز هویت راه‌اندازی شد');
+}
+
+// اجرا وقتی DOM کاملاً آماده است
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM آماده شد');
+    setTimeout(initializeAuth, 100);
+});
+
+// توابع کمکی برای نمایش خطاها
+function showError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    if (errorElement) {
+        const span = errorElement.querySelector('span');
+        if (span) span.textContent = message;
+        errorElement.classList.add('show');
+        
+        const inputId = elementId.replace('Error', '');
+        const inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            inputElement.classList.add('error');
+        }
+    }
+}
+
+function hideError(elementId) {
+    const errorElement = document.getElementById(elementId);
+    if (errorElement) {
+        errorElement.classList.remove('show');
+        
+        const inputId = elementId.replace('Error', '');
+        const inputElement = document.getElementById(inputId);
+        if (inputElement) {
+            inputElement.classList.remove('error');
+        }
+    }
 }
