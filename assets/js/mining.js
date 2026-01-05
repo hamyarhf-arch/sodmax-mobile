@@ -1,348 +1,201 @@
-// ==================== سیستم استخراج ====================
-class MobileCityVerse {
-    constructor() {
-        this.userManager = new UserManager();
-        this.currentUser = null;
-        this.autoMiningInterval = null;
-        this.boostEndTime = null;
-        this.boostInterval = null;
-        
-        this.gameData = {
-            missions: {
-                active: [
-                    { id: 1, name: "۱۰۰ کلیک در بازی", reward: 500, progress: 45, max: 100 },
-                    { id: 2, name: "دعوت ۵ دوست", reward: 1000, progress: 2, max: 5 }
-                ]
-            }
-        };
+// ==================== Mining Functions ====================
+
+// استخراج دستی
+function manualMineMobile() {
+    const userManager = new UserManager();
+    const currentUser = userManager.getCurrentUser();
+    
+    if (!currentUser) {
+        alert('لطفاً اول وارد شوید');
+        return;
     }
     
-    // استخراج دستی
-    mine(user) {
-        if (!user) return 0;
-        
-        const baseEarn = user.miningPower || 5;
-        const multiplier = user.miningMultiplier || 1;
-        const earned = baseEarn * multiplier;
-        
-        user.sodBalance = (user.sodBalance || 0) + earned;
-        user.todayEarned = (user.todayEarned || 0) + earned;
-        user.totalMined = (user.totalMined || 0) + earned;
-        
-        if (this.gameData.missions.active[0]) {
-            this.gameData.missions.active[0].progress++;
-        }
-        
-        this.userManager.addTransaction(user.id, {
-            type: "استخراج دستی",
-            amount: earned,
-            currency: "SOD",
-            status: "موفق",
-            icon: "fa-hard-hat",
-            color: "var(--primary)"
-        });
-        
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        return earned;
+    // محاسبه مقدار استخراج بر اساس قدرت ماینر
+    const miningAmount = Math.floor(currentUser.miningPower * 10);
+    
+    // به‌روزرسانی موجودی کاربر
+    currentUser.sodBalance += miningAmount;
+    currentUser.todayEarned += miningAmount;
+    currentUser.totalMined += miningAmount;
+    
+    userManager.updateUser(currentUser);
+    
+    // نمایش افکت استخراج
+    createManualMiningEffect(miningAmount);
+    
+    // به‌روزرسانی UI
+    updateMiningUI();
+    
+    console.log('⚡ استخراج دستی:', miningAmount + ' SOD');
+    
+    // نمایش پیام موفقیت
+    setTimeout(() => {
+        showToastMobile('⚡ استخراج موفق', `+${miningAmount} SOD استخراج شد!`, 'success');
+    }, 500);
+}
+
+// به‌روزرسانی UI استخراج
+function updateMiningUI() {
+    const userManager = new UserManager();
+    const currentUser = userManager.getCurrentUser();
+    
+    if (!currentUser) return;
+    
+    console.log('🔄 به‌روزرسانی UI استخراج');
+    
+    // به‌روزرسانی موجودی‌ها
+    const quickSodBalance = document.getElementById('quickSodBalance');
+    if (quickSodBalance) {
+        quickSodBalance.textContent = formatNumber(currentUser.sodBalance);
     }
     
-    // استخراج اتوماتیک
-    autoMine(user) {
-        if (!user || !user.autoMining) return 0;
-        
-        const earned = this.mine(user);
-        return earned;
+    const walletSodBalance = document.getElementById('walletSodBalance');
+    if (walletSodBalance) {
+        walletSodBalance.textContent = formatNumber(currentUser.sodBalance);
     }
     
-    // فعال/غیرفعال کردن استخراج اتوماتیک
-    toggleAutoMining(user) {
-        if (!user) return false;
-        
-        user.autoMining = !user.autoMining;
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        if (user.autoMining) {
-            this.startAutoMining();
-        } else {
-            this.stopAutoMining();
-        }
-        
-        return user.autoMining;
+    const modalSodBalance = document.getElementById('modalSodBalance');
+    if (modalSodBalance) {
+        modalSodBalance.textContent = formatNumber(currentUser.sodBalance) + ' SOD';
     }
     
-    // شروع استخراج اتوماتیک
-    startAutoMining() {
-        if (this.autoMiningInterval) {
-            clearInterval(this.autoMiningInterval);
-        }
-        
-        this.autoMiningInterval = setInterval(() => {
-            if (this.currentUser && this.currentUser.autoMining) {
-                const earned = this.autoMine(this.currentUser);
-                if (earned > 0) {
-                    this.createMiningEffect(earned);
-                    updateMobileUI();
-                }
-            } else {
-                this.stopAutoMining();
-            }
-        }, 5000);
+    const menuSodBalance = document.getElementById('menuSodBalance');
+    if (menuSodBalance) {
+        menuSodBalance.textContent = formatNumber(currentUser.sodBalance);
     }
     
-    // توقف استخراج اتوماتیک
-    stopAutoMining() {
-        if (this.autoMiningInterval) {
-            clearInterval(this.autoMiningInterval);
-            this.autoMiningInterval = null;
-        }
+    // به‌روزرسانی آمار استخراج
+    const miningTodayMobile = document.getElementById('miningTodayMobile');
+    if (miningTodayMobile) {
+        miningTodayMobile.textContent = formatNumber(currentUser.todayEarned);
     }
     
-    // افزایش قدرت استخراج (بوست)
-    boostMining(user) {
-        if (!user) return false;
-        
-        const cost = 5000;
-        if (user.sodBalance < cost) {
-            return false;
-        }
-        
-        user.sodBalance -= cost;
-        user.miningMultiplier = 3;
-        this.boostEndTime = Date.now() + 30000;
-        
-        this.userManager.addTransaction(user.id, {
-            type: "خرید بوست",
-            amount: -cost,
-            currency: "SOD",
-            status: "موفق",
-            icon: "fa-bolt",
-            color: "var(--accent)"
-        });
-        
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        this.startBoostTimer();
-        
-        return true;
+    const miningTotalMobile = document.getElementById('miningTotalMobile');
+    if (miningTotalMobile) {
+        miningTotalMobile.textContent = formatNumber(currentUser.totalMined);
     }
     
-    // شروع تایمر بوست
-    startBoostTimer() {
-        if (this.boostInterval) {
-            clearInterval(this.boostInterval);
-        }
-        
-        this.boostInterval = setInterval(() => {
-            if (this.boostEndTime && Date.now() >= this.boostEndTime) {
-                if (this.currentUser) {
-                    this.currentUser.miningMultiplier = 1;
-                    this.userManager.updateUser(this.currentUser);
-                    updateMobileUI();
-                }
-                this.clearBoostTimer();
-            }
-        }, 1000);
+    const miningPowerMobile = document.getElementById('miningPowerMobile');
+    if (miningPowerMobile) {
+        miningPowerMobile.textContent = currentUser.miningPower + 'x';
     }
     
-    // پاک کردن تایمر بوست
-    clearBoostTimer() {
-        if (this.boostInterval) {
-            clearInterval(this.boostInterval);
-            this.boostInterval = null;
-            this.boostEndTime = null;
-        }
+    const miningTodayText = document.getElementById('miningTodayText');
+    if (miningTodayText) {
+        miningTodayText.textContent = `+${formatNumber(currentUser.todayEarned)} SOD`;
     }
     
-    // ارتقاء ماینر
-    upgradeMiner(user) {
-        if (!user) return false;
-        
-        const cost = 50000;
-        if (user.sodBalance < cost) {
-            return false;
-        }
-        
-        user.sodBalance -= cost;
-        user.miningPower = (user.miningPower || 5) + 5;
-        user.level = (user.level || 1) + 1;
-        
-        this.userManager.addTransaction(user.id, {
-            type: "ارتقاء ماینر",
-            amount: -cost,
-            currency: "SOD",
-            status: "موفق",
-            icon: "fa-arrow-up",
-            color: "var(--accent)"
-        });
-        
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        const notifications = JSON.parse(localStorage.getItem(this.userManager.notificationsKey)) || [];
-        notifications.push({
-            id: Date.now(),
-            userId: user.id,
-            title: "🎉 ارتقاء موفق",
-            message: `ماینر شما به سطح ${user.level} ارتقا یافت! قدرت +۵ افزایش یافت.`,
-            time: "همین حالا",
-            read: false
-        });
-        localStorage.setItem(this.userManager.notificationsKey, JSON.stringify(notifications));
-        
-        return true;
+    // به‌روزرسانی اطلاعات ماینر
+    const minerLevel = document.getElementById('minerLevel');
+    if (minerLevel) {
+        minerLevel.textContent = currentUser.level;
     }
     
-    // تکمیل مأموریت
-    completeMission(user, missionId) {
-        const mission = this.gameData.missions.active.find(m => m.id === missionId);
-        if (!mission) return false;
-        
-        user.tomanBalance += mission.reward;
-        user.totalEarned += mission.reward;
-        user.completedMissions = (user.completedMissions || 0) + 1;
-        
-        this.userManager.addTransaction(user.id, {
-            type: "پاداش مأموریت",
-            amount: mission.reward,
-            currency: "تومان",
-            status: "موفق",
-            icon: "fa-trophy",
-            color: "var(--secondary)"
-        });
-        
-        this.gameData.missions.active = this.gameData.missions.active.filter(m => m.id !== missionId);
-        
-        this.addNewMission();
-        
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        return mission.reward;
+    const currentPower = document.getElementById('currentPower');
+    if (currentPower) {
+        currentPower.textContent = currentUser.miningPower + 'x';
     }
     
-    // اضافه کردن مأموریت جدید
-    addNewMission() {
-        const newMissionId = this.gameData.missions.active.length > 0 ? 
-            Math.max(...this.gameData.missions.active.map(m => m.id)) + 1 : 1;
-        
-        const missionsPool = [
-            { name: "۲۰۰ کلیک در بازی", reward: 1000, max: 200 },
-            { name: "دعوت ۳ دوست", reward: 2000, max: 3 },
-            { name: "ارتقاء ماینر", reward: 3000, max: 1 },
-            { name: "برداشت تومان", reward: 1500, max: 1 }
-        ];
-        
-        const randomMission = missionsPool[Math.floor(Math.random() * missionsPool.length)];
-        
-        this.gameData.missions.active.push({
-            id: newMissionId,
-            name: randomMission.name,
-            reward: randomMission.reward,
-            progress: 0,
-            max: randomMission.max
-        });
+    const nextPower = document.getElementById('nextPower');
+    if (nextPower) {
+        nextPower.textContent = (currentUser.miningPower + 5) + 'x';
     }
     
-    // برداشت تومان
-    withdrawToman(user) {
-        if (!user) return false;
-        
-        if (user.tomanBalance < 10000) {
-            return false;
-        }
-        
-        const amount = user.tomanBalance;
-        user.tomanBalance = 0;
-        
-        this.userManager.addTransaction(user.id, {
-            type: "برداشت تومان",
-            amount: amount,
-            currency: "تومان",
-            status: "در حال پردازش",
-            icon: "fa-download",
-            color: "var(--secondary)"
-        });
-        
-        this.userManager.updateUser(user);
-        this.currentUser = user;
-        
-        return amount;
+    const upgradeCost = document.getElementById('upgradeCost');
+    if (upgradeCost) {
+        const cost = currentUser.level * 50000;
+        upgradeCost.textContent = formatNumber(cost) + ' SOD';
     }
     
-    // دعوت دوست
-    inviteFriend(user) {
-        if (!user) return false;
-        
-        const referrals = this.userManager.addReferral(user.id);
-        
-        if (referrals) {
-            return true;
-        }
-        return false;
+    const upgradeCostBtn = document.getElementById('upgradeCostBtn');
+    if (upgradeCostBtn) {
+        const cost = currentUser.level * 50000;
+        upgradeCostBtn.textContent = formatNumber(cost);
     }
     
-    // تأیید دعوت
-    confirmReferral(userId) {
-        return this.userManager.confirmReferral(userId);
+    const nextLevelCost = document.getElementById('nextLevelCost');
+    if (nextLevelCost) {
+        const cost = currentUser.level * 50000;
+        nextLevelCost.textContent = formatNumber(cost);
     }
     
-    // محاسبه هزینه ارتقای سطح بعدی
-    getNextLevelCost(level) {
-        return level * 10000;
+    const clickRewardMobile = document.getElementById('clickRewardMobile');
+    if (clickRewardMobile) {
+        const rewardAmount = Math.floor(currentUser.miningPower * 10);
+        clickRewardMobile.textContent = `+${rewardAmount} SOD`;
     }
     
-    // ایجاد افکت ماینینگ
-    createMiningEffect(amount) {
-        const minerElement = document.querySelector('.miner-3d-mobile');
-        if (!minerElement) return;
-        
-        const rect = minerElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        const effect = document.createElement('div');
-        effect.className = 'mining-effect';
-        effect.innerHTML = `<span>+${amount} SOD</span>`;
-        
-        effect.style.position = 'fixed';
-        effect.style.left = `${centerX}px`;
-        effect.style.top = `${centerY}px`;
-        effect.style.zIndex = '10000';
-        
-        document.body.appendChild(effect);
-        
-        setTimeout(() => {
-            if (effect.parentNode) {
-                effect.parentNode.removeChild(effect);
-            }
-        }, 1100);
+    console.log('✅ UI استخراج به‌روزرسانی شد');
+}
+
+// ارتقاء ماینر
+function upgradeMinerMobile() {
+    const userManager = new UserManager();
+    const currentUser = userManager.getCurrentUser();
+    
+    if (!currentUser) {
+        alert('لطفاً اول وارد شوید');
+        return;
     }
     
-    // پخش صدای استخراج
-    playMiningSound() {
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+    const upgradeCost = currentUser.level * 50000; // هزینه ارتقاء بر اساس سطح
+    
+    if (currentUser.sodBalance >= upgradeCost) {
+        if (confirm(`⚠️ آیا مایل به ارتقاء ماینر هستید؟\n\nهزینه: ${formatNumber(upgradeCost)} SOD\nقدرت فعلی: ${currentUser.miningPower}x\nقدرت جدید: ${currentUser.miningPower + 5}x`)) {
+            // کسر هزینه
+            currentUser.sodBalance -= upgradeCost;
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
+            // افزایش قدرت ماینر
+            currentUser.miningPower += 5;
             
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
+            // افزایش سطح کاربر
+            currentUser.level += 1;
             
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            // ذخیره تغییرات
+            userManager.updateUser(currentUser);
             
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.1);
+            // به‌روزرسانی UI
+            updateMiningUI();
             
-        } catch (e) {
-            console.log('پخش صدا پشتیبانی نمی‌شود');
+            // نمایش پیام موفقیت
+            alert(`✅ ماینر با موفقیت ارتقاء یافت!\n\n✨ قدرت جدید: ${currentUser.miningPower}x\n📈 سطح جدید: ${currentUser.level}`);
+            
+            console.log('⬆️ ماینر ارتقاء یافت:', {
+                level: currentUser.level,
+                power: currentUser.miningPower,
+                cost: upgradeCost
+            });
+            
+            // نمایش افکت
+            setTimeout(() => {
+                createMiningEffect(0); // افکت ویژه ارتقاء
+                showToastMobile('🎉 ارتقاء موفق', `ماینر به سطح ${currentUser.level} ارتقاء یافت!`, 'success');
+            }, 300);
         }
+    } else {
+        alert(`❌ موجودی SOD کافی نیست!\n\n💰 نیاز: ${formatNumber(upgradeCost)} SOD\n💳 موجودی شما: ${formatNumber(currentUser.sodBalance)} SOD\n\nبرای افزایش موجودی می‌توانید:\n1. دوستان خود را دعوت کنید\n2. استخراج بیشتری انجام دهید\n3. مأموریت‌ها را تکمیل کنید`);
+        console.log('❌ موجودی ناکافی برای ارتقاء:', {
+            needed: upgradeCost,
+            current: currentUser.sodBalance
+        });
     }
 }
+
+// بارگذاری اولیه اطلاعات استخراج
+function initializeMining() {
+    console.log('⛏️ راه‌اندازی سیستم استخراج...');
+    
+    // به‌روزرسانی UI استخراج
+    updateMiningUI();
+    
+    // تنظیم کلیک روی ماینر
+    const minerElement = document.querySelector('.miner-3d-mobile');
+    if (minerElement) {
+        console.log('✅ ماینر برای کلیک آماده شد');
+    }
+    
+    console.log('✅ سیستم استخراج راه‌اندازی شد');
+}
+
+// اجرا وقتی اپلیکیشن آماده است
+setTimeout(initializeMining, 1000);
