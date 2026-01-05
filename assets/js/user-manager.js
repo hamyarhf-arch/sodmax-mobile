@@ -1,6 +1,7 @@
 // ==================== سیستم مدیریت کاربران ====================
 class UserManager {
     constructor() {
+        console.log('👤 UserManager ایجاد شد');
         this.currentUser = null;
         this.usersKey = 'sodmax_users';
         this.currentUserKey = 'sodmax_current_user';
@@ -39,6 +40,7 @@ class UserManager {
                 }
             ];
             localStorage.setItem(this.usersKey, JSON.stringify(defaultUsers));
+            console.log('💾 کاربران پیش‌فرض ایجاد شدند');
         }
         
         if (!localStorage.getItem(this.transactionsKey)) {
@@ -102,11 +104,13 @@ class UserManager {
         
         const users = this.getUsers();
         
+        // بررسی تکراری نبودن شماره موبایل
         if (users.find(user => user.phone === phone)) {
             console.log('❌ شماره موبایل تکراری');
             return { success: false, message: "این شماره موبایل قبلاً ثبت‌نام کرده است" };
         }
         
+        // ایجاد کاربر جدید
         const newUser = {
             id: Date.now(),
             name: name,
@@ -131,21 +135,25 @@ class UserManager {
             referralLink: `https://sodmax.city/invite/${this.generateReferralCode(name)}`
         };
         
-        console.log('👤 کاربر جدید:', newUser);
+        console.log('👤 کاربر جدید ایجاد شد:', newUser.name);
         
         let referralBonus = 0;
+        
+        // بررسی کد دعوت
         if (referralCode) {
             console.log('🎁 کد دعوت وارد شده:', referralCode);
             const referrer = users.find(user => user.referralCode === referralCode);
             if (referrer) {
                 console.log('✅ دعوت‌کننده یافت شد:', referrer.name);
                 
+                // اعطای پاداش به دعوت‌کننده
                 referrer.tomanBalance += 1000;
                 referrer.totalEarned += 1000;
                 referrer.referralEarnings += 1000;
                 referrer.referralCount++;
                 this.updateUser(referrer);
                 
+                // اضافه کردن تراکنش برای دعوت‌کننده
                 this.addTransaction(referrer.id, {
                     type: "پاداش دعوت",
                     amount: 1000,
@@ -155,9 +163,11 @@ class UserManager {
                     color: "var(--secondary)"
                 });
                 
+                // اعطای پاداش به کاربر جدید
                 newUser.sodBalance += 500;
                 referralBonus = 500;
                 
+                // ارسال نوتیفیکیشن به دعوت‌کننده
                 const notifications = this.getNotifications();
                 notifications.push({
                     id: Date.now() + 1,
@@ -173,10 +183,12 @@ class UserManager {
             }
         }
         
+        // ذخیره کاربر جدید
         users.push(newUser);
         localStorage.setItem(this.usersKey, JSON.stringify(users));
         console.log('💾 کاربر در localStorage ذخیره شد');
         
+        // ارسال نوتیفیکیشن خوش آمدگویی
         const notifications = this.getNotifications();
         notifications.push({
             id: Date.now() + 2,
@@ -188,6 +200,7 @@ class UserManager {
         });
         localStorage.setItem(this.notificationsKey, JSON.stringify(notifications));
         
+        // ایجاد رکورد دعوت‌ها
         const referrals = this.getReferrals();
         referrals.push({
             id: newUser.id,
@@ -201,7 +214,11 @@ class UserManager {
         });
         localStorage.setItem(this.referralsKey, JSON.stringify(referrals));
         
-        console.log('✅ ثبت‌نام کامل شد');
+        // ذخیره کاربر جاری
+        localStorage.setItem(this.currentUserKey, JSON.stringify(newUser));
+        this.currentUser = newUser;
+        
+        console.log('✅ ثبت‌نام با موفقیت انجام شد');
         return { 
             success: true, 
             user: newUser,
@@ -216,7 +233,7 @@ class UserManager {
     }
     
     login(phone, password) {
-        console.log('🔐 شروع ورود:', { phone });
+        console.log('🔐 شروع عملیات ورود:', { phone });
         
         const users = this.getUsers();
         const user = users.find(user => user.phone === phone);
@@ -233,9 +250,11 @@ class UserManager {
         
         console.log('✅ احراز هویت موفق:', user.name);
         
+        // به‌روزرسانی تاریخ آخرین ورود
         user.lastLogin = new Date().toLocaleDateString('fa-IR');
         this.updateUser(user);
         
+        // ذخیره کاربر جاری
         localStorage.setItem(this.currentUserKey, JSON.stringify(user));
         this.currentUser = user;
         
@@ -244,7 +263,7 @@ class UserManager {
     }
     
     logout() {
-        console.log('👋 خروج کاربر');
+        console.log('👋 عملیات خروج کاربر');
         localStorage.removeItem(this.currentUserKey);
         this.currentUser = null;
         return true;
@@ -267,7 +286,7 @@ class UserManager {
     }
     
     updateUser(updatedUser) {
-        console.log('✏️ به‌روزرسانی کاربر:', updatedUser.name);
+        console.log('✏️ به‌روزرسانی اطلاعات کاربر:', updatedUser.name);
         
         const users = this.getUsers();
         const index = users.findIndex(user => user.id === updatedUser.id);
@@ -281,7 +300,7 @@ class UserManager {
                 localStorage.setItem(this.currentUserKey, JSON.stringify(updatedUser));
             }
             
-            console.log('✅ کاربر به‌روزرسانی شد');
+            console.log('✅ اطلاعات کاربر با موفقیت به‌روزرسانی شد');
             return true;
         }
         
@@ -299,7 +318,7 @@ class UserManager {
         try {
             return JSON.parse(users);
         } catch (error) {
-            console.error('❌ خطا در خواندن کاربران:', error);
+            console.error('❌ خطا در خواندن لیست کاربران:', error);
             return [];
         }
     }
@@ -359,4 +378,11 @@ class UserManager {
         }
         return false;
     }
+}
+
+// تابع خروج از حساب
+function logoutUser() {
+    localStorage.removeItem('sodmax_current_user');
+    alert('✅ شما با موفقیت از حساب کاربری خارج شدید.');
+    location.reload();
 }
